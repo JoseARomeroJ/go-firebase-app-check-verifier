@@ -25,11 +25,11 @@ type verifier struct {
 	keysRefresher keyfunc.Options
 }
 
-func New(projectName string) Verifier {
+func New(projectNum string) Verifier {
 	v := verifier{
-		projectName:        projectName,
-		projectAppCheckUrl: fmt.Sprintf(appProjectUrl, projectName),
-		projectPath:        fmt.Sprintf(appProjectPath, projectName),
+		projectName:        projectNum,
+		projectAppCheckUrl: fmt.Sprintf(appProjectUrl, projectNum),
+		projectPath:        fmt.Sprintf(appProjectPath, projectNum),
 	}
 
 	v.keysRefresher = keyfunc.Options{
