@@ -8,9 +8,13 @@ func GetTokenFromRequest(r *http.Request) *string {
 	}
 
 	token := r.Header.Get(tokenHeader)
-	if token == "" {
-		return nil
+	urlToken := r.URL.Query().Get(tokenHeader)
+
+	if token != "" {
+		return &token
+	} else if urlToken != "" {
+		return &urlToken
 	}
 
-	return &token
+	return nil
 }
