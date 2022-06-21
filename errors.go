@@ -1,4 +1,4 @@
-package app_check_verifier
+package appchecker
 
 import "errors"
 

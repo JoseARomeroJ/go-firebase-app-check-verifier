@@ -1,4 +1,4 @@
-package app_check_verifier
+package appchecker
 
 const (
 	tokenHeader                = "X-Firebase-AppCheck"

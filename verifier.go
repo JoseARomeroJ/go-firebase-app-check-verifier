@@ -1,4 +1,4 @@
-package app_check_verifier
+package appchecker
 
 import (
 	"context"
@@ -18,18 +18,23 @@ type Verifier interface {
 }
 
 type verifier struct {
-	projectName        string
-	projectAppCheckUrl string
-	projectPath        string
+	projectsNum         []string
+	projectsAppCheckUrl map[string]string
+	projectsPath        map[string]string
 
 	keysRefresher keyfunc.Options
 }
 
-func New(projectNum string) Verifier {
+func New(projectsNum []string) Verifier {
 	v := verifier{
-		projectName:        projectNum,
-		projectAppCheckUrl: fmt.Sprintf(appProjectUrl, projectNum),
-		projectPath:        fmt.Sprintf(appProjectPath, projectNum),
+		projectsNum:         projectsNum,
+		projectsAppCheckUrl: map[string]string{},
+		projectsPath:        map[string]string{},
+	}
+
+	for _, s := range projectsNum {
+		v.projectsAppCheckUrl[s] = fmt.Sprintf(appProjectUrl, s)
+		v.projectsPath[s] = fmt.Sprintf(appProjectPath, s)
 	}
 
 	v.keysRefresher = keyfunc.Options{
@@ -75,16 +80,20 @@ func (v verifier) validateResponse(r *jwt.Token) error {
 		return ErrInvalidToken
 	} else if !v.verifyAudience(r.Claims.(jwt.MapClaims)["aud"].([]interface{})) {
 		return ErrInvalidToken
-	} else if !strings.Contains(r.Claims.(jwt.MapClaims)["iss"].(string), v.projectAppCheckUrl) {
-		return ErrInvalidToken
 	}
 
-	return nil
+	for _, s := range v.projectsAppCheckUrl {
+		if strings.Contains(r.Claims.(jwt.MapClaims)["iss"].(string), s) {
+			return nil
+		}
+	}
+
+	return ErrInvalidToken
 }
 
 func (v verifier) verifyAudience(audiences []interface{}) bool {
 	for _, aud := range audiences {
-		if aud == v.projectPath {
+		if _, ok := v.projectsPath[aud.(string)]; ok {
 			return true
 		}
 	}
