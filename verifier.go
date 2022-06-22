@@ -34,7 +34,7 @@ func New(projectsNum []string) Verifier {
 
 	for _, s := range projectsNum {
 		v.projectsAppCheckUrl[s] = fmt.Sprintf(appProjectUrl, s)
-		v.projectsPath[s] = fmt.Sprintf(appProjectPath, s)
+		v.projectsPath[fmt.Sprintf(appProjectPath, s)] = s
 	}
 
 	v.keysRefresher = keyfunc.Options{
