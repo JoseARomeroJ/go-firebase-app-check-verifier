@@ -59,8 +59,8 @@ func (v verifier) VerifyToken(token string) error {
 	}
 
 	payload, err := jwt.Parse(token, keys.Keyfunc)
-	if err != nil {
-		return fmt.Errorf("%w: %s", ErrInvalidKeys, err)
+	if err != nil && err == jwt.ErrTokenExpired {
+		return fmt.Errorf("%w: %s", ErrInvalidToken, err)
 	}
 
 	err = v.validateResponse(payload)
